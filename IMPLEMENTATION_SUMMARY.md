@@ -23,6 +23,7 @@ This class is responsible for:
 - Formatting thoughts for display
 - Extracting meta-information from Gemini responses
 - Maintaining thought history and branches
+- Saving and loading analysis sessions
 
 #### MCP Server
 
@@ -37,6 +38,7 @@ The "geminithinking" tool is defined with:
 - Comprehensive description of capabilities
 - Input schema with required and optional parameters
 - Support for various thinking patterns (sequential, branching, revision)
+- Session management commands
 
 #### Client Examples
 
@@ -44,6 +46,8 @@ Multiple client examples demonstrate:
 - Basic usage with simple queries
 - Codebase analysis with filtering
 - Interactive exploration of alternative paths
+- Session persistence and management
+- Advanced semantic filtering of codebases
 
 ## Key Features
 
@@ -64,13 +68,21 @@ Multiple client examples demonstrate:
 
 4. **Codebase Integration**
    - Support for analyzing code repositories
-   - Filtering relevant parts of the codebase
+   - Basic and advanced filtering of relevant parts of the codebase
+   - Semantic-based code filtering using keywords and relevance scoring
+   - Automatic extraction of keywords from queries
    - Context-aware analysis
 
 5. **Visualization**
    - Formatted output with clear thought boundaries
    - Color-coded thought types (regular, revision, branch)
    - Display of meta-information
+
+6. **Session Persistence**
+   - Save analysis sessions to files
+   - Load sessions to resume analysis
+   - Query current session state
+   - Manage multiple analysis sessions
 
 ## Implementation Files
 
@@ -82,6 +94,8 @@ Multiple client examples demonstrate:
 6. **sample-client.js** - Basic client example
 7. **codebase-analysis-example.js** - Example for codebase analysis
 8. **example-usage.js** - Specific usage example
+9. **session-example.js** - Example demonstrating session persistence
+10. **advanced-filtering-example.js** - Example demonstrating advanced semantic filtering
 
 ## Usage Workflow
 
@@ -98,7 +112,7 @@ Multiple client examples demonstrate:
 
 3. **Codebase Analysis**
    - Generate a consolidated view of the codebase
-   - Filter relevant parts if needed
+   - Apply basic or advanced filtering to identify relevant code
    - Submit analysis queries
    - Explore thoughts and alternative paths
 
@@ -106,6 +120,8 @@ Multiple client examples demonstrate:
    - Branch thoughts to explore alternatives
    - Revise previous thoughts
    - Save analysis results for future reference
+   - Save and resume analysis sessions
+   - Use semantic filtering to focus on relevant code sections
 
 ## Technical Considerations
 
@@ -128,30 +144,43 @@ Multiple client examples demonstrate:
    - Support for additional Gemini models
    - Potential for additional tools
 
+5. **Session Management**
+   - JSON-based session storage format
+   - Validation of loaded session data
+   - Error handling for session operations
+
+6. **Advanced Filtering**
+   - Keyword extraction from queries
+   - Relevance scoring for files
+   - File type and content-based weighting
+   - Customizable filtering with additional keywords
+
 ## Future Enhancements
 
-1. **Advanced Filtering**
-   - Semantic-based code filtering
-   - Automatic identification of relevant code sections
+1. **Further Filtering Improvements**
+   - Machine learning-based relevance prediction
+   - Code dependency analysis for more accurate filtering
+   - User feedback integration to improve filtering accuracy
 
-2. **Persistent Sessions**
-   - Saving and resuming analysis sessions
-   - Exporting and importing thought histories
-
-3. **Visualization Improvements**
+2. **Visualization Improvements**
    - Interactive thought maps
    - Relationship visualization between thoughts
 
-4. **Integration with Development Tools**
+3. **Integration with Development Tools**
    - IDE plugins
    - CI/CD pipeline integration
 
-5. **Multi-Model Support**
+4. **Multi-Model Support**
    - Support for other AI models
    - Model comparison capabilities
+
+5. **Enhanced Session Management**
+   - Encrypted session storage
+   - Cloud-based session synchronization
+   - Session sharing and collaboration
 
 ## Conclusion
 
 This implementation provides a powerful integration between the Model Context Protocol and Google's Gemini API, enabling sophisticated analytical thinking capabilities without code generation. It's particularly valuable for understanding and improving codebases through AI-assisted analysis.
 
-The modular architecture ensures extensibility, while the comprehensive documentation and examples make it accessible to users with varying levels of expertise.
+The modular architecture ensures extensibility, while the comprehensive documentation and examples make it accessible to users with varying levels of expertise. The addition of session persistence functionality allows users to save their progress and resume analysis sessions later, making it more practical for complex, long-running analyses. The advanced filtering capabilities help users focus on the most relevant parts of large codebases, improving the quality and relevance of the analysis.

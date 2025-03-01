@@ -19,6 +19,7 @@ The Gemini Thinking Server is a specialized MCP server that leverages Google's G
 - **Alternative Paths**: Suggests different approaches to the problem
 - **Branching Thoughts**: Allows exploration of different thought paths
 - **Revision Capability**: Supports revising previous thoughts
+- **Session Persistence**: Save and resume analysis sessions
 
 ## Installation
 
@@ -67,6 +68,51 @@ The `geminithinking` tool accepts the following parameters:
 - `branchId` (optional): Branch identifier
 - `needsMoreThoughts` (optional): If more thoughts are needed
 
+### Session Management
+
+The tool also supports session management commands:
+
+- `sessionCommand`: Command to manage sessions ('save', 'load', 'getState')
+- `sessionPath`: Path to save or load the session file (required for 'save' and 'load' commands)
+
+#### Example: Saving a Session
+
+```json
+{
+  "sessionCommand": "save",
+  "sessionPath": "/path/to/save/session.json",
+  "query": "dummy",
+  "thoughtNumber": 1,
+  "totalThoughts": 1,
+  "nextThoughtNeeded": false
+}
+```
+
+#### Example: Loading a Session
+
+```json
+{
+  "sessionCommand": "load",
+  "sessionPath": "/path/to/load/session.json",
+  "query": "dummy",
+  "thoughtNumber": 1,
+  "totalThoughts": 1,
+  "nextThoughtNeeded": false
+}
+```
+
+#### Example: Getting Session State
+
+```json
+{
+  "sessionCommand": "getState",
+  "query": "dummy",
+  "thoughtNumber": 1,
+  "totalThoughts": 1,
+  "nextThoughtNeeded": false
+}
+```
+
 ## Example
 
 Here's an example of how to use the tool:
@@ -98,6 +144,28 @@ The server responds with:
   "confidenceLevel": 0.85,
   "alternativePaths": ["Alternative approach 1", "Alternative approach 2"]
 }
+```
+
+## Example Clients
+
+Several example clients are provided to demonstrate different use cases:
+
+- `sample-client.js`: Basic client example
+- `example-usage.js`: Specific usage example
+- `codebase-analysis-example.js`: Example for codebase analysis
+- `session-example.js`: Example demonstrating session persistence
+- `advanced-filtering-example.js`: Example demonstrating advanced semantic filtering
+
+To run the session example:
+
+```bash
+node dist/session-example.js
+```
+
+To run the advanced filtering example:
+
+```bash
+node dist/advanced-filtering-example.js
 ```
 
 ## License

@@ -11,6 +11,9 @@ import {
 import chalk from 'chalk';
 // Import for Gemini API
 import { GoogleGenerativeAI } from "@google/generative-ai";
+// Add these imports after the existing imports
+import fs from 'fs';
+import path from 'path';
 
 interface ThoughtData {
   query: string;
@@ -223,8 +226,134 @@ ${formattedContent}└${border}┘`;
     }
   }
 
+  public saveSession(filePath: string): boolean {
+    try {
+      const sessionData = {
+        thoughtHistory: this.thoughtHistory,
+        branches: this.branches,
+        timestamp: new Date().toISOString(),
+        version: '0.1.0'
+      };
+      
+      fs.writeFileSync(filePath, JSON.stringify(sessionData, null, 2));
+      console.error(chalk.green(`Session saved to ${filePath}`));
+      return true;
+    } catch (error) {
+      console.error(chalk.red(`Error saving session: ${error instanceof Error ? error.message : String(error)}`));
+      return false;
+    }
+  }
+
+  public loadSession(filePath: string): boolean {
+    try {
+      if (!fs.existsSync(filePath)) {
+        console.error(chalk.red(`Session file not found: ${filePath}`));
+        return false;
+      }
+      
+      const sessionData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      
+      // Validate the session data
+      if (!sessionData.thoughtHistory || !Array.isArray(sessionData.thoughtHistory)) {
+        console.error(chalk.red('Invalid session data: thoughtHistory is missing or not an array'));
+        return false;
+      }
+      
+      // Load the session data
+      this.thoughtHistory = sessionData.thoughtHistory;
+      this.branches = sessionData.branches || {};
+      
+      console.error(chalk.green(`Session loaded from ${filePath}`));
+      console.error(chalk.blue(`Loaded ${this.thoughtHistory.length} thoughts and ${Object.keys(this.branches).length} branches`));
+      
+      // Display the loaded thoughts
+      this.thoughtHistory.forEach(thought => {
+        console.error(this.formatThought(thought));
+      });
+      
+      return true;
+    } catch (error) {
+      console.error(chalk.red(`Error loading session: ${error instanceof Error ? error.message : String(error)}`));
+      return false;
+    }
+  }
+
+  // Add a method to get the current session state
+  public getSessionState(): { thoughtHistory: ThoughtData[], branches: Record<string, ThoughtData[]> } {
+    return {
+      thoughtHistory: this.thoughtHistory,
+      branches: this.branches
+    };
+  }
+
   public async processThought(input: unknown): Promise<{ content: Array<{ type: string; text: string }>; isError?: boolean }> {
     try {
+      // Check if this is a session command
+      const data = input as Record<string, unknown>;
+      
+      if (data.sessionCommand && typeof data.sessionCommand === 'string') {
+        const command = data.sessionCommand;
+        
+        if (command === 'save' && data.sessionPath && typeof data.sessionPath === 'string') {
+          const success = this.saveSession(data.sessionPath as string);
+          return {
+            content: [{
+              type: "text",
+              text: JSON.stringify({
+                status: success ? 'success' : 'error',
+                message: success ? `Session saved to ${data.sessionPath}` : 'Failed to save session',
+                command: 'save'
+              }, null, 2)
+            }]
+          };
+        }
+        
+        if (command === 'load' && data.sessionPath && typeof data.sessionPath === 'string') {
+          const success = this.loadSession(data.sessionPath as string);
+          return {
+            content: [{
+              type: "text",
+              text: JSON.stringify({
+                status: success ? 'success' : 'error',
+                message: success ? `Session loaded from ${data.sessionPath}` : 'Failed to load session',
+                command: 'load',
+                thoughtHistoryLength: this.thoughtHistory.length,
+                branches: Object.keys(this.branches)
+              }, null, 2)
+            }]
+          };
+        }
+        
+        if (command === 'getState') {
+          const state = this.getSessionState();
+          return {
+            content: [{
+              type: "text",
+              text: JSON.stringify({
+                status: 'success',
+                command: 'getState',
+                thoughtHistoryLength: state.thoughtHistory.length,
+                branches: Object.keys(state.branches),
+                lastThought: state.thoughtHistory.length > 0 ? state.thoughtHistory[state.thoughtHistory.length - 1] : null
+              }, null, 2)
+            }]
+          };
+        }
+        
+        return {
+          content: [{
+            type: "text",
+            text: JSON.stringify({
+              status: 'error',
+              message: `Unknown session command: ${command}`,
+              command
+            }, null, 2)
+          }],
+          isError: true
+        };
+      }
+      
+      // Regular thought processing continues as before
       const validatedInput = this.validateThoughtData(input);
 
       if (validatedInput.thoughtNumber > validatedInput.totalThoughts) {
@@ -305,6 +434,7 @@ Key features:
 - You can add more thoughts even after reaching what seemed like the end
 - You can express uncertainty and explore alternative approaches
 - Not every thought needs to build linearly - you can branch or backtrack
+- Session persistence: save and resume your analysis sessions
 
 Parameters explained:
 - query: The question or problem to be analyzed
@@ -324,13 +454,18 @@ Parameters explained:
 - confidenceLevel: Gemini's confidence in the generated thought (0-1)
 - alternativePaths: Alternative approaches suggested by Gemini
 
+Session commands:
+- sessionCommand: Command to manage sessions ('save', 'load', 'getState')
+- sessionPath: Path to save or load the session file (required for 'save' and 'load' commands)
+
 You should:
 1. Start with a clear query and any relevant context
 2. Let Gemini generate thoughts by not providing the 'thought' parameter
 3. Review the generated thoughts and meta-commentary
 4. Feel free to revise or branch thoughts as needed
 5. Consider alternative paths suggested by Gemini
-6. Only set next_thought_needed to false when truly done`,
+6. Only set next_thought_needed to false when truly done
+7. Use session commands to save your progress and resume later`,
   inputSchema: {
     type: "object",
     properties: {
@@ -409,6 +544,14 @@ You should:
           type: "string"
         },
         description: "Alternative approaches suggested"
+      },
+      sessionCommand: {
+        type: "string",
+        description: "Command to manage sessions ('save', 'load', 'getState')"
+      },
+      sessionPath: {
+        type: "string",
+        description: "Path to save or load the session file"
       }
     },
     required: ["query", "nextThoughtNeeded", "thoughtNumber", "totalThoughts"]

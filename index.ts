@@ -123,7 +123,7 @@ class GeminiThinkingServer {
       header.length,
       ...contentLines.map(line => line.length)
     );
-    const border = '─'.repeat(maxLineLength + 4);
+    const border = '─'.repeat(maxLineLength + 45);
 
     let formattedContent = '';
     for (const line of contentLines) {
@@ -166,10 +166,10 @@ ${formattedContent}└${border}┘`;
 
       // Configure the model parameters
       const generationConfig = {
-        temperature: 0.7,
-        topP: 0.8,
+        temperature: 1.3,
+        topP: 0.9,
         topK: 40,
-        maxOutputTokens: 1024,
+        maxOutputTokens: 60000,
       };
 
       // Generate content with Gemini

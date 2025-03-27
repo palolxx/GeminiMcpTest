@@ -1,5 +1,6 @@
 # Model Context Protocol - Gemini Thinking Server
 
+[![smithery badge](https://smithery.ai/badge/@palolxx/geminimcptest)](https://smithery.ai/server/@palolxx/geminimcptest)
 This is an implementation of the Model Context Protocol (MCP) that integrates with Google's Gemini API to provide analytical thinking capabilities without code generation.
 
 ## Overview
@@ -23,6 +24,15 @@ The Gemini Thinking Server is a specialized MCP server that leverages Google's G
 
 ## Installation
 
+### Installing via Smithery
+
+To install geminimcptest for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@palolxx/geminimcptest):
+
+```bash
+npx -y @smithery/cli install @palolxx/geminimcptest --client claude
+```
+
+### Manual Installation
 ```bash
 # Clone the repository
 git clone <repository-url>

@@ -123,7 +123,7 @@ class GeminiThinkingServer {
       header.length,
       ...contentLines.map(line => line.length)
     );
-    const border = '─'.repeat(maxLineLength + 45);
+    const border = '─'.repeat(maxLineLength + 455);
 
     let formattedContent = '';
     for (const line of contentLines) {
@@ -465,6 +465,8 @@ You should:
 4. Feel free to revise or branch thoughts as needed
 5. Consider alternative paths suggested by Gemini
 6. Only set next_thought_needed to false when truly done
+7. give realy realy long thinking results,like 1000words or something it should be a lot
+7. give realy realy long thinking results,like 1000words or something it should be a lot
 7. give realy realy long thinking results,like 1000words or something it should be a lot
 8. Use session commands to save your progress and resume later`,
   inputSchema: {

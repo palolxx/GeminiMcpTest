@@ -162,7 +162,7 @@ ${formattedContent}└${border}┘`;
         prompt += ` (branching from thought #${input.branchFromThought})`;
       }
       
-      prompt += `\nRemember: DO NOT generate any code, only provide analytical thinking.`;
+      prompt += `\nRemember: DO NOT generate any code, only provide analytical thinking,the thinking must be a lot,like 1000words or something it should be a lot.`;
 
       // Configure the model parameters
       const generationConfig = {
@@ -411,7 +411,7 @@ ${formattedContent}└${border}┘`;
 
 const GEMINI_THINKING_TOOL: Tool = {
   name: "geminithinking",
-  description: `A detailed tool for dynamic and reflective problem-solving through Gemini AI.
+  description: `A detailed tool for that uses Gemini 2.5 Pro dynamic and reflective problem-solving through Gemini AI.
 This tool helps analyze problems through a flexible thinking process powered by Google's Gemini model.
 Each thought can build on, question, or revise previous insights as understanding deepens.
 
@@ -465,7 +465,8 @@ You should:
 4. Feel free to revise or branch thoughts as needed
 5. Consider alternative paths suggested by Gemini
 6. Only set next_thought_needed to false when truly done
-7. Use session commands to save your progress and resume later`,
+7. give realy realy long thinking results,like 1000words or something it should be a lot
+8. Use session commands to save your progress and resume later`,
   inputSchema: {
     type: "object",
     properties: {
@@ -564,7 +565,7 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
 const server = new Server(
   {
     name: "gemini-thinking-server",
-    version: "0.1.0",
+    version: "0.1.1",
   },
   {
     capabilities: {
